@@ -1,0 +1,103 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: expert_bot
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Cache pip packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-asyncio pytest-cov
+
+    - name: Create .env file
+      run: |
+        echo "BOT_TOKEN=test_token" > .env
+        echo "EXPERT_TELEGRAM_ID=123456789" >> .env
+        echo "DATABASE_URL=postgresql+asyncpg://postgres:postgres@localhost:5432/expert_bot" >> .env
+        echo "REDIS_URL=redis://localhost:6379/0" >> .env
+        echo "ADMIN_USERNAME=admin" >> .env
+        echo "ADMIN_PASSWORD_HASH=test_hash" >> .env
+        echo "JWT_SECRET=test_secret_key_for_ci_cd_pipeline" >> .env
+        echo "RAG_SIMILARITY_THRESHOLD=85" >> .env
+        echo "OLLAMA_URL=http://localhost:11434" >> .env
+        echo "OLLAMA_MODEL=qwen2.5:7b" >> .env
+
+    - name: Run tests
+      run: |
+        pytest tests/ -v --cov=. --cov-report=xml
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./coverage.xml
+        fail_ci_if_error: false
+
+  lint:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install ruff
+      run: pip install ruff
+
+    - name: Run ruff linter
+      run: ruff check . --output-format=github
+
+    - name: Run ruff formatter check
+      run: ruff format . --check
