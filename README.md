@@ -1,4 +1,4 @@
-# ExpertBot — Telegram бот-эксперт с RAG и самообучением
+# ExpertBot — Telegram бот-эксперт c самообучением
 
 ## 📌 Задача бизнеса
 Бизнесу требуется автоматический консультант в Telegram, который отвечает на часто задаваемые вопросы, обучается на ответах эксперта и не требует постоянного присутствия человека. При этом критически важны конфиденциальность данных (всё локально) и возможность управления базой знаний.
@@ -140,14 +140,3 @@ Copyright (c) 2026 Gennadiy Kazakov. All Rights Reserved.
 
 **Telegram:** [@Kazakovgennn](https://t.me/Kazakovgennn)  
 **Email:** kazakovgennn@mail.ru  
-
----
-
-## 🙏 Благодарности
-
-- [python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot)
-- [FastAPI](https://github.com/tiangolo/fastapi)
-- [Qwen](https://github.com/QwenLM/Qwen) — локальная LLM
-- [LanceDB](https://github.com/lancedb/lancedb)
-- [shadcn/ui](https://ui.shadcn.com/)
-- [sentence-transformers](https://www.sbert.net/)
