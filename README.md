@@ -135,8 +135,3 @@ Copyright (c) 2026 Gennadiy Kazakov. All Rights Reserved.
 Для коммерческого использования свяжитесь: @Kazakovgennn
 
 ---
-
-## 👨‍💻 Автор
-
-**Telegram:** [@Kazakovgennn](https://t.me/Kazakovgennn)  
-**Email:** kazakovgennn@mail.ru  
